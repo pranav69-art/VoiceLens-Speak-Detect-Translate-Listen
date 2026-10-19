@@ -1,0 +1,364 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>VoiceLens</title>
+<style>
+:root{--bg:#eef1ff;--tx:#10122b;--mut:#5b6088;--glass:rgba(255,255,255,.62);--bd:rgba(90,80,200,.25);--btn:#fff;--in:rgba(255,255,255,.8);--c1:#00a9d6;--c2:#7a3cff;--c3:#e0149c;--glow:.35;
+ box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#03040a;--tx:#eaf0ff;--mut:#8f98c4;--glass:rgba(18,20,42,.55);--bd:rgba(120,140,255,.22);--btn:#07081a;--in:rgba(8,10,28,.7);--c1:#00e5ff;--c2:#9b5cff;--c3:#ff2fd0;--glow:.8}}
+:root[data-theme="dark"]{--bg:#03040a;--tx:#eaf0ff;--mut:#8f98c4;--glass:rgba(18,20,42,.55);--bd:rgba(120,140,255,.22);--btn:#07081a;--in:rgba(8,10,28,.7);--c1:#00e5ff;--c2:#9b5cff;--c3:#ff2fd0;--glow:.8}
+@property --a{syntax:'<angle>';inherits:false;initial-value:0deg}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}
+body{margin:0;min-height:100vh;background:var(--bg);color:var(--tx);font:16px/1.5 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;overflow-x:hidden;transition:background .4s,color .4s}
+#fx{position:fixed;inset:0;z-index:0;pointer-events:none}
+.aur{position:fixed;inset:0;z-index:0;pointer-events:none;background:radial-gradient(45% 40% at 15% 20%,color-mix(in srgb,var(--c2) calc(var(--glow)*40%),transparent),transparent),radial-gradient(40% 40% at 85% 75%,color-mix(in srgb,var(--c1) calc(var(--glow)*35%),transparent),transparent),radial-gradient(30% 30% at 60% 10%,color-mix(in srgb,var(--c3) calc(var(--glow)*25%),transparent),transparent)}
+header,main{position:relative;z-index:1}
+header{display:flex;justify-content:space-between;align-items:center;padding:18px 24px;max-width:1200px;margin:auto}
+.logo{font-weight:800;letter-spacing:.5px;font-size:20px;background:linear-gradient(90deg,var(--c1),var(--c2),var(--c3));-webkit-background-clip:text;background-clip:text;color:transparent}
+.ic{width:42px;height:42px;border-radius:50%;border:1px solid var(--bd);background:var(--glass);color:var(--tx);font-size:18px;cursor:pointer;backdrop-filter:blur(12px);transition:.25s}
+.ic:hover{box-shadow:0 0 18px var(--c1);transform:rotate(20deg) scale(1.08)}
+main{max-width:1200px;margin:auto;padding:0 24px 40px}
+#hero{min-height:72vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:18px}
+#hero.leave{animation:leave .7s cubic-bezier(.7,0,.3,1) forwards}
+@keyframes leave{to{opacity:0;transform:scale(1.25);filter:blur(14px)}}
+.eyebrow{margin:0;color:var(--c1);letter-spacing:.35em;text-transform:uppercase;font-size:13px;text-shadow:0 0 14px var(--c1)}
+h1{margin:0;font-size:clamp(38px,7vw,84px);line-height:1.05;font-weight:800}
+.grad{background:linear-gradient(90deg,var(--c1),var(--c2),var(--c3),var(--c1));background-size:300%;-webkit-background-clip:text;background-clip:text;color:transparent;animation:flow 6s linear infinite}
+@keyframes flow{to{background-position:300%}}
+.sub{max-width:560px;color:var(--mut);margin:0 0 14px;font-size:18px}
+.go{position:relative;isolation:isolate;border:0;padding:3px;border-radius:999px;cursor:pointer;color:var(--tx);
+ background:conic-gradient(from var(--a),#00e5ff,#ff00e5,#8a2be2,#2d6bff,#00ff88,#ffe600,#ff4fa3,#00e5ff);animation:spin 3s linear infinite,float 3.4s ease-in-out infinite;transition:transform .25s}
+.go::before{content:"";position:absolute;inset:-8px;border-radius:inherit;background:inherit;filter:blur(20px);opacity:.75;z-index:-1;animation:pulse 2s ease-in-out infinite}
+.go::after{content:"";position:absolute;inset:-14px;border-radius:inherit;border:2px solid #00e5ff;opacity:0;animation:ping 2.4s ease-out infinite;z-index:-1}
+.go span{display:block;padding:20px 58px;border-radius:999px;background:var(--btn);font-size:22px;font-weight:800;letter-spacing:.5px}
+.go:hover{transform:scale(1.08)}.go:active{transform:scale(.95)}
+@keyframes spin{to{--a:360deg}}
+@keyframes pulse{50%{opacity:.35;transform:scale(1.06)}}
+@keyframes ping{0%{opacity:.7;transform:scale(.96)}100%{opacity:0;transform:scale(1.35)}}
+@keyframes float{50%{translate:0 -6px}}
+.glass{background:var(--glass);border:1px solid var(--bd);border-radius:22px;backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);box-shadow:0 0 0 1px rgba(255,255,255,.03) inset,0 10px 40px rgba(0,0,0,.35),0 0 calc(30px*var(--glow)) color-mix(in srgb,var(--c2) 40%,transparent);padding:18px}
+.modal{position:fixed;inset:0;z-index:20;display:grid;place-items:center;background:rgba(0,0,0,.55);backdrop-filter:blur(6px);animation:fade .4s}
+.modal[hidden],#app[hidden]{display:none}
+.modal .glass{max-width:420px;text-align:center;animation:pop .5s cubic-bezier(.2,1.3,.4,1)}
+@keyframes fade{from{opacity:0}}@keyframes pop{from{opacity:0;transform:scale(.8) translateY(30px)}}
+.modal h2{margin:8px 0}.modal p{color:var(--mut);margin:0 0 18px}
+.eye{font-size:44px;filter:drop-shadow(0 0 14px var(--c1))}
+.btn{border:1px solid var(--bd);background:var(--in);color:var(--tx);padding:11px 20px;border-radius:12px;font-weight:600;font-size:15px;font-family:inherit;cursor:pointer;transition:.2s}
+.btn:hover{box-shadow:0 0 18px var(--c1);transform:translateY(-1px)}
+.btn.pri{border:0;color:#fff;background:linear-gradient(90deg,#0aa8ff,var(--c2),var(--c3));box-shadow:0 0 22px color-mix(in srgb,var(--c2) 70%,transparent)}
+.btn.on{box-shadow:0 0 22px var(--c3);border-color:var(--c3)}
+#app{animation:rise .8s cubic-bezier(.2,.9,.3,1)}
+@keyframes rise{from{opacity:0;transform:translateY(50px) scale(.97)}}
+.grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.1fr);gap:20px}
+@media(max-width:900px){.grid{grid-template-columns:1fr}}
+.stack{display:flex;flex-direction:column;gap:20px}
+.vfbox{position:relative;aspect-ratio:4/3;border-radius:16px;overflow:hidden;background:#000;box-shadow:0 0 28px color-mix(in srgb,var(--c1) 55%,transparent)}
+video{display:block;position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transform:scaleX(-1);background:#000}
+.nocam{position:absolute;inset:0;display:grid;place-items:center;color:var(--mut);text-align:center;padding:20px;background:radial-gradient(circle,#101436,#000)}
+.cn{position:absolute;width:34px;height:34px;border:3px solid var(--c1);filter:drop-shadow(0 0 6px var(--c1))}
+.cn.a{top:10px;left:10px;border-right:0;border-bottom:0}.cn.b{top:10px;right:10px;border-left:0;border-bottom:0}
+.cn.c{bottom:10px;left:10px;border-right:0;border-top:0}.cn.d{bottom:10px;right:10px;border-left:0;border-top:0}
+.scan{position:absolute;left:0;right:0;height:3px;background:linear-gradient(90deg,transparent,var(--c1),transparent);opacity:.6;animation:scan 3.5s linear infinite;box-shadow:0 0 14px var(--c1)}
+@keyframes scan{from{top:0}to{top:100%}}
+.rec{position:absolute;top:16px;left:54px;display:none;align-items:center;gap:8px;font:700 13px monospace;color:#fff;background:rgba(0,0,0,.5);padding:4px 10px;border-radius:99px}
+.rec i{width:10px;height:10px;border-radius:50%;background:#ff2d55;animation:blink 1s infinite}
+@keyframes blink{50%{opacity:.2}}
+.listening .rec{display:flex}.listening .vfbox{box-shadow:0 0 38px var(--c3)}
+#wave{width:100%;height:64px;display:block;margin-top:12px}
+#melPanel{margin-top:16px}#melCanvas{width:100%;height:100px;display:block;border-radius:10px;background:#070817}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-top:12px}
+select,input[type=text],textarea{background:var(--in);color:var(--tx);border:1px solid var(--bd);border-radius:12px;padding:10px 12px;font:inherit;outline:0;transition:.2s}
+select:focus,input:focus,textarea:focus{border-color:var(--c1);box-shadow:0 0 16px color-mix(in srgb,var(--c1) 55%,transparent)}
+.badge{padding:6px 14px;border-radius:99px;font-size:14px;font-weight:700;border:1px solid var(--c1);color:var(--c1);box-shadow:0 0 14px color-mix(in srgb,var(--c1) 50%,transparent)}
+.badge.pop{animation:pop .5s}
+h3{margin:0 0 10px;font-size:13px;letter-spacing:.2em;text-transform:uppercase;color:var(--mut)}
+textarea{width:100%;min-height:190px;resize:vertical;font-size:17px;line-height:1.6}
+.interim{min-height:24px;color:var(--c1);font-style:italic;margin-top:6px;text-shadow:0 0 10px var(--c1)}
+.ai-config{margin-top:14px;border-top:1px solid var(--bd);padding-top:12px;color:var(--mut);font-size:13px}
+.ai-config summary{cursor:pointer;color:var(--c1);font-weight:700}
+.ai-config label{display:block;margin-top:10px}.ai-config input{display:block;width:100%;margin-top:4px}
+.combo{position:relative;flex:1;min-width:220px}.combo input{width:100%}
+#opts{position:absolute;z-index:5;left:0;right:0;top:calc(100% + 6px);max-height:240px;overflow:auto;margin:0;padding:6px;list-style:none;background:var(--bg);border:1px solid var(--bd);border-radius:14px;box-shadow:0 12px 40px rgba(0,0,0,.5),0 0 20px color-mix(in srgb,var(--c2) 40%,transparent)}
+#opts[hidden]{display:none}
+#opts li{padding:8px 12px;border-radius:9px;cursor:pointer;display:flex;justify-content:space-between}
+#opts li:hover{background:color-mix(in srgb,var(--c2) 30%,transparent)}#opts small{color:var(--mut)}
+.exp{margin-top:20px;display:flex;flex-wrap:wrap;gap:16px;align-items:center;justify-content:space-between;border-color:var(--c2);animation:glowb 3s ease-in-out infinite}
+@keyframes glowb{50%{box-shadow:0 0 44px color-mix(in srgb,var(--c3) 55%,transparent)}}
+.seg{display:inline-flex;border:1px solid var(--bd);border-radius:12px;overflow:hidden}
+.seg label{padding:10px 22px;cursor:pointer;font-weight:700;transition:.2s}
+.seg input{display:none}.seg input:checked+span{color:#fff}
+.seg label:has(input:checked){background:linear-gradient(90deg,var(--c1),var(--c2));color:#fff;box-shadow:0 0 18px var(--c1)}
+#toast{position:fixed;left:50%;bottom:26px;transform:translate(-50%,30px);z-index:30;background:var(--bg);border:1px solid var(--c3);padding:10px 18px;border-radius:12px;opacity:0;pointer-events:none;transition:.35s;box-shadow:0 0 22px var(--c3);max-width:90vw}
+#toast.show{opacity:1;transform:translate(-50%,0)}
+</style>
+</head>
+<body>
+<canvas id="fx"></canvas><div class="aur"></div>
+<header><div class="logo">◉ VoiceLens</div><button class="ic" id="theme" aria-label="Toggle light or dark theme">☾</button></header>
+<main>
+<section id="hero">
+  <p class="eyebrow">Speak · Detect · Translate · Listen</p>
+  <h1>Your voice,<br><span class="grad">in every language</span></h1>
+  <p class="sub">Open your camera, speak naturally and watch VoiceLens turn it into live text, translate it into 130+ languages and read it back to you.</p>
+  <button class="go" id="go"><span>Let’s Go →</span></button>
+</section>
+
+<section id="app" hidden>
+  <div class="grid">
+    <div class="glass" id="left">
+      <h3>Viewfinder</h3>
+      <div class="vfbox">
+        <video id="cam" autoplay muted playsinline></video>
+        <div class="nocam" id="nocam" hidden><div><strong id="camStatus">Camera unavailable</strong><br><span id="camDetail">Audio-only mode is active</span><br><button class="btn" id="retryCam" type="button" style="margin-top:12px">Retry camera</button></div></div>
+        <span class="cn a"></span><span class="cn b"></span><span class="cn c"></span><span class="cn d"></span>
+        <div class="scan"></div><div class="rec"><i></i>LISTENING</div>
+      </div>
+      <canvas id="wave" width="640" height="64"></canvas>
+      <div id="melPanel" hidden><h3>Local AI · Log-Mel spectrogram</h3><canvas id="melCanvas" width="180" height="80" aria-label="Log-Mel spectrogram of the last recording"></canvas></div>
+      <div class="row">
+        <button class="btn pri" id="mic">🎙 Start listening</button>
+        <button class="btn" id="stopListening" type="button" disabled>⏹ Stop listening</button>
+        <button class="btn" id="aiRecord" type="button">🧠 Start local AI</button>
+        <select id="spoken" aria-label="Spoken language"></select>
+      </div>
+      <div class="row"><span class="badge" id="badge">Detected: waiting for speech…</span></div>
+      <div class="row"><span id="aiStatus" style="color:var(--mut);font-size:13px">Local Whisper: record a clip for AI transcription and language detection.</span></div>
+      <details class="ai-config"><summary>Hosted local AI access</summary>
+        <label>Deployment access token (only needed when the server requires one)<input id="localToken" type="password" placeholder="Paste the deployment token" autocomplete="off"></label>
+        <div class="row"><button class="btn" id="saveLocalToken" type="button">Save for this session</button></div>
+      </details>
+    </div>
+
+    <div class="stack">
+      <div class="glass">
+        <h3>Live transcript · editable</h3>
+        <textarea id="tx" placeholder="Your words appear here as you speak. You can also type or fix text yourself."></textarea>
+        <div class="interim" id="interim"></div>
+      </div>
+      <div class="glass">
+        <h3>Translate</h3>
+        <div class="row" style="margin-top:0">
+          <div class="combo"><input type="text" id="q" placeholder="Search 130+ languages…" autocomplete="off"><ul id="opts" hidden></ul></div>
+          <button class="btn" id="tr">Translate</button>
+        </div>
+        <textarea id="out" style="min-height:120px;margin-top:12px" placeholder="Translation appears here"></textarea>
+        <div class="row"><button class="btn" id="say">🔊 Read Aloud</button><span id="cnt" style="color:var(--mut);font-size:13px"></span></div>
+        <details class="ai-config"><summary>AI translation settings</summary>
+          <label>API endpoint<input id="aiEndpoint" type="text" value="https://api.openai.com/v1/chat/completions" autocomplete="url"></label>
+          <label>Model<input id="aiModel" type="text" value="gpt-4o-mini" autocomplete="off"></label>
+          <label>API key (kept for this browser session)<input id="aiKey" type="password" placeholder="Paste your provider API key" autocomplete="off"></label>
+          <div class="row"><button class="btn" id="saveAi">Save settings</button><span>Requests go directly from your browser to this provider.</span></div>
+        </details>
+      </div>
+    </div>
+  </div>
+
+  <div class="glass exp">
+    <div><h3 style="margin:0 0 6px">Export</h3><div class="seg"><label><input type="radio" name="fmt" value="txt" checked><span>TXT</span></label><label><input type="radio" name="fmt" value="pdf"><span>PDF</span></label></div></div>
+    <button class="btn pri" id="dl" style="font-size:17px;padding:14px 34px">⬇ Download transcript</button>
+  </div>
+</section>
+</main>
+
+<div class="modal" id="perm" hidden><div class="glass"><div class="eye">📷</div><h2>Allow camera &amp; microphone</h2>
+<p>VoiceLens shows your camera in the viewfinder and listens through your microphone. Nothing is uploaded, your browser handles the speech recognition.</p>
+<div class="row" style="justify-content:center"><button class="btn pri" id="allow">Allow access</button><button class="btn" id="skip">Mic only</button></div></div></div>
+<div id="toast"></div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+<script>
+const $=s=>document.querySelector(s);
+const toast=m=>{const t=$('#toast');t.textContent=m;t.classList.add('show');clearTimeout(toast.t);toast.t=setTimeout(()=>t.classList.remove('show'),3800)};
+
+/* theme */
+$('#theme').onclick=()=>{const r=document.documentElement,l=r.dataset.theme==='light';r.dataset.theme=l?'dark':'light';$('#theme').textContent=l?'☾':'☀'};
+
+/* particles */
+const cv=$('#fx'),cx=cv.getContext('2d');let P=[];
+function rs(){cv.width=innerWidth;cv.height=innerHeight;P=Array.from({length:Math.min(90,innerWidth/14|0)},()=>({x:Math.random()*cv.width,y:Math.random()*cv.height,r:Math.random()*2+.6,v:Math.random()*.45+.1,h:[190,270,310,160][Math.random()*4|0]}))}
+addEventListener('resize',rs);rs();
+(function loop(){cx.clearRect(0,0,cv.width,cv.height);for(const p of P){p.y-=p.v;if(p.y<-5){p.y=cv.height+5;p.x=Math.random()*cv.width}cx.fillStyle=`hsla(${p.h},100%,65%,.75)`;cx.shadowBlur=12;cx.shadowColor=`hsl(${p.h},100%,60%)`;cx.beginPath();cx.arc(p.x,p.y,p.r,0,7);cx.fill()}requestAnimationFrame(loop)})();
+
+/* languages */
+const CODES="af sq am ar hy as ay az bm eu be bn bho bs bg ca ceb ny zh-CN zh-TW co hr cs da dv doi nl en eo et ee tl fi fr fy gl ka de el gn gu ht ha haw iw hi hmn hu is ig ilo id ga it ja jv kn kk km rw gom ko kri ku ckb ky lo la lv ln lt lg lb mk mai mg ms ml mt mi mr mni-Mtei lus mn my ne no or om ps fa pl pt pa qu ro ru sm sa gd nso sr st sn sd si sk sl so es su sw sv tg ta tt te th ti ts tr tk ak uk ur ug uz vi cy xh yi yo zu".split(' ');
+let dn;try{dn=new Intl.DisplayNames(['en'],{type:'language'})}catch{}
+const L=CODES.map(c=>{let n=c;try{n=dn.of(c)||c}catch{}return{c,n}}).sort((a,b)=>a.n.localeCompare(b.n));
+const nameOf=c=>{try{return dn.of(c)||c}catch{return c}};
+$('#cnt').textContent=L.length+' languages';
+$('#spoken').innerHTML='<option value="auto">Auto-detect spoken language</option>'+L.map(l=>`<option value="${l.c}">${l.n}</option>`).join('');
+
+/* searchable language dropdown */
+let target=null;const q=$('#q'),opts=$('#opts');
+function fill(){const f=q.value.trim().toLowerCase();const r=L.filter(l=>!f||l.n.toLowerCase().includes(f)||l.c.toLowerCase().includes(f));
+ opts.innerHTML=r.length?r.map(l=>`<li data-c="${l.c}">${l.n}<small>${l.c}</small></li>`).join(''):'<li>No match</li>';opts.hidden=false}
+q.onfocus=q.oninput=fill;
+q.onkeydown=e=>{if(e.key==='Enter'){const li=opts.querySelector('li[data-c]');if(li)li.click()}};
+opts.onclick=e=>{const li=e.target.closest('li[data-c]');if(!li)return;target=L.find(l=>l.c===li.dataset.c);q.value=target.n;opts.hidden=true;translate()};
+document.addEventListener('click',e=>{if(!e.target.closest('.combo'))opts.hidden=true});
+
+/* camera + audio */
+let stream=null,actx,ana,buf;
+function cameraErrorMessage(e){
+ if(!navigator.mediaDevices?.getUserMedia)return 'Camera access requires HTTPS or localhost in a supported browser.';
+ if(e?.name==='NotAllowedError'||e?.name==='SecurityError')return 'Allow camera access in the browser site settings, then retry.';
+ if(e?.name==='NotFoundError'||e?.name==='OverconstrainedError')return 'No available camera was found. Connect or enable a camera, then retry.';
+ if(e?.name==='NotReadableError'||e?.name==='AbortError')return 'The camera may be in use by another app. Close it there, then retry.';
+ return 'Check camera connection and browser permission, then retry.';
+}
+function showCameraError(e){$('#nocam').hidden=false;$('#camStatus').textContent='Camera unavailable';const detail=cameraErrorMessage(e);$('#camDetail').textContent=e?.name?detail+' ('+e.name+')':detail;}
+async function startCamera(){
+ if(!navigator.mediaDevices?.getUserMedia){showCameraError();return false}
+ try{
+  let camera;
+  try{camera=await navigator.mediaDevices.getUserMedia({video:{facingMode:{ideal:'user'}},audio:false})}
+  catch(e){if(e?.name==='NotAllowedError'||e?.name==='SecurityError')throw e;camera=await navigator.mediaDevices.getUserMedia({video:true,audio:false})}
+  const video=$('#cam');video.srcObject=camera;await video.play();$('#nocam').hidden=true;
+  camera.getVideoTracks()[0]?.addEventListener('ended',()=>{if(video.srcObject===camera)showCameraError({name:'NotReadableError'})});
+  if(stream)for(const track of stream.getVideoTracks())track.stop();
+  if(stream){for(const track of stream.getVideoTracks())stream.removeTrack(track);for(const track of camera.getVideoTracks())stream.addTrack(track)}else stream=camera;
+  return true;
+ }catch(e){showCameraError(e);return false}
+}
+async function getMedia(video){
+ if(!stream)stream=new MediaStream();
+ if(video)await startCamera();
+ if(!stream.getAudioTracks().length&&navigator.mediaDevices?.getUserMedia){try{const audio=await navigator.mediaDevices.getUserMedia({audio:true,video:false});for(const track of audio.getAudioTracks())stream.addTrack(track)}catch{toast('Microphone blocked; you can still type and translate')}}
+ if(stream.getAudioTracks().length&&!actx){try{actx=new (window.AudioContext||window.webkitAudioContext)();ana=actx.createAnalyser();ana.fftSize=128;actx.createMediaStreamSource(new MediaStream(stream.getAudioTracks())).connect(ana);buf=new Uint8Array(ana.frequencyBinCount)}catch{}}
+ if(!video)$('#nocam').hidden=false;
+ openApp()}
+function openApp(){$('#perm').hidden=true;$('#hero').hidden=true;$('#app').hidden=false;window.scrollTo({top:0,behavior:'smooth'})}
+$('#go').onclick=()=>{$('#hero').classList.add('leave');setTimeout(()=>{$('#perm').hidden=false},650)};
+$('#allow').onclick=()=>getMedia(true);
+$('#skip').onclick=()=>getMedia(false);
+$('#retryCam').onclick=()=>startCamera().then(ok=>{if(ok)toast('Camera connected')});
+
+/* on-device Whisper ASR and language identification via the local Python service */
+let aiRecorder=null,aiChunks=[];
+const aiButton=$('#aiRecord'),aiStatus=$('#aiStatus');
+const localToken=$('#localToken');
+try{localToken.value=sessionStorage.getItem('voicelens-local-ai-token')||''}catch{}
+$('#saveLocalToken').onclick=()=>{try{sessionStorage.setItem('voicelens-local-ai-token',localToken.value.trim());toast('Local AI token saved for this browser session')}catch{toast('Could not save the token in this browser')}};
+async function sendToLocalAI(blob){
+ aiStatus.textContent='Local Whisper is identifying the language and transcribing…';
+ try{
+  const headers={'Content-Type':blob.type||'audio/webm'};if(localToken.value.trim())headers.Authorization='Bearer '+localToken.value.trim();
+  const response=await fetch('/api/transcribe',{method:'POST',headers,body:blob});
+  const data=await response.json().catch(()=>({}));if(!response.ok)throw new Error(data.error||'Local AI service returned HTTP '+response.status);
+  const text=(data.text||'').trim();if(!text)throw new Error('No speech was detected in that clip. Try recording again.');
+  tx.value+=(tx.value.trim()?' ':'')+text;setBadge(data.language);
+  drawMelPreview(data.melPreview);
+  const confidence=Math.round((data.languageProbability||0)*100),mel=data.logMel||{};
+  aiStatus.textContent='Whisper '+data.model+' · '+nameOf(data.language)+' ('+confidence+'%) · Log-Mel '+(mel.melBands||80)+' × '+(mel.frames||'—');
+ }catch(e){aiStatus.textContent='Local AI could not transcribe this clip.';toast(e.message||'Local AI transcription failed')}
+}
+function drawMelPreview(columns){
+ if(!Array.isArray(columns)||!columns.length)return;
+ const canvas=$('#melCanvas'),ctx=canvas.getContext('2d'),height=columns[0].length||80;width=columns.length;
+ canvas.width=width;canvas.height=height;const image=ctx.createImageData(width,height);
+ for(let x=0;x<width;x++)for(let y=0;y<height;y++){
+  const value=columns[x][y]||0,index=(y*width+x)*4;image.data[index]=Math.round(value*.18);image.data[index+1]=Math.round(value*.58);image.data[index+2]=Math.min(255,Math.round(45+value*.82));image.data[index+3]=255;
+ }
+ ctx.putImageData(image,0,0);$('#melPanel').hidden=false;
+}
+aiButton.onclick=async()=>{
+ if(aiRecorder?.state==='recording'){aiButton.disabled=true;aiButton.textContent='Processing clip…';aiRecorder.stop();return}
+ if(!window.MediaRecorder){toast('This browser does not support audio recording for local AI');return}
+ if(listening)setListening(false);
+ const tracks=stream?.getAudioTracks().filter(track=>track.readyState==='live')||[];
+ if(!tracks.length){toast('Allow microphone access first, then try local AI');return}
+ try{
+  const audioStream=new MediaStream(tracks),types=['audio/webm;codecs=opus','audio/webm','audio/mp4'];
+  const mimeType=types.find(type=>MediaRecorder.isTypeSupported(type));
+  aiRecorder=mimeType?new MediaRecorder(audioStream,{mimeType}):new MediaRecorder(audioStream);aiChunks=[];
+  aiRecorder.ondataavailable=event=>{if(event.data.size)aiChunks.push(event.data)};
+  aiRecorder.onerror=()=>toast('Could not record audio; check microphone permission');
+  aiRecorder.onstop=()=>{const blob=new Blob(aiChunks,{type:aiRecorder?.mimeType||mimeType||'audio/webm'});aiRecorder=null;aiChunks=[];aiButton.disabled=false;aiButton.textContent='🧠 Start local AI';if(blob.size)sendToLocalAI(blob)};
+  aiRecorder.start();aiButton.textContent='⏹ Stop and transcribe';aiStatus.textContent='Recording on this device… stop when you finish speaking.';
+ }catch(e){aiRecorder=null;aiButton.textContent='🧠 Start local AI';toast('Could not start recording: '+(e.message||'check browser support'))}
+};
+fetch('/api/health').then(response=>response.json()).then(data=>{
+ const model=data.speechModel;if(data.authenticationRequired)$('#localToken').closest('details').open=true;
+ if(data.authenticationRequired)aiStatus.textContent='This hosted server requires an access token. Open Hosted local AI access.';
+ else if(!model?.installed)aiStatus.textContent='Local Whisper is not installed yet. See README for setup.';
+ else aiStatus.textContent='Local Whisper '+model.model+' ready; first use downloads its model weights.';
+}).catch(()=>{});
+
+/* visualizer */
+(function wave(t){const c=$('#wave'),g=c.getContext('2d'),W=c.width,H=c.height,n=56,bw=W/n;g.clearRect(0,0,W,H);
+ const on=$('#left').classList.contains('listening');if(on&&ana)ana.getByteFrequencyData(buf);
+ const gr=g.createLinearGradient(0,0,W,0);gr.addColorStop(0,'#00e5ff');gr.addColorStop(.5,'#9b5cff');gr.addColorStop(1,'#ff2fd0');g.fillStyle=gr;g.shadowBlur=12;g.shadowColor='#9b5cff';
+ for(let i=0;i<n;i++){const v=on&&ana?buf[Math.min(buf.length-1,i*buf.length/n|0)]/255:0;const idle=.06+.04*Math.sin(t/400+i/3);const h=Math.max(3,(on?v*.95+.04:idle)*H);g.fillRect(i*bw+2,(H-h)/2,bw-4,h)}
+ requestAnimationFrame(wave)})(0);
+
+/* speech recognition + live typing */
+const SR=window.SpeechRecognition||window.webkitSpeechRecognition,tx=$('#tx');
+let rec=null,listening=false,lang=(navigator.language||'en-US'),pending='',detCode='';
+setInterval(()=>{if(pending){const k=Math.max(1,Math.ceil(pending.length/40));tx.value+=pending.slice(0,k);pending=pending.slice(k);tx.scrollTop=tx.scrollHeight}},18);
+const SCR=[[/[\u0900-\u097F]/,'hi'],[/[\u0600-\u06FF]/,'ar'],[/[\u3040-\u30FF]/,'ja'],[/[\uAC00-\uD7AF]/,'ko'],[/[\u4E00-\u9FFF]/,'zh-CN'],[/[\u0400-\u04FF]/,'ru'],[/[\u0E00-\u0E7F]/,'th'],[/[\u0370-\u03FF]/,'el'],[/[\u0590-\u05FF]/,'iw'],[/[\u0980-\u09FF]/,'bn'],[/[\u0B80-\u0BFF]/,'ta'],[/[\u0C00-\u0C7F]/,'te']];
+const WD={en:'the and is to of you that it for with',es:'el la de que y en los es un por',fr:'le la les de et est un une que pour',de:'der die das und ist nicht ich ein zu',pt:'o a de que e do da em um para',it:'il di che e un per non sono con',nl:'de het een en van ik niet is dat',id:'yang dan di ini itu dengan untuk tidak saya',tr:'bir ve bu için ben değil ne var çok'};
+function detect(s){for(const[r,c]of SCR)if(r.test(s))return c;const w=s.toLowerCase().split(/\s+/);let best='',sc=1;
+ for(const k in WD){const n=w.filter(x=>WD[k].split(' ').includes(x)).length;if(n>sc){sc=n;best=k}}return best}
+function setBadge(c){if(!c||c===detCode)return;detCode=c;const b=$('#badge');b.textContent='Detected: '+nameOf(c)+' ('+c+')';b.classList.remove('pop');void b.offsetWidth;b.classList.add('pop')}
+function startRec(){
+ if(!SR){toast('Speech recognition needs Chrome, Edge or Safari. You can still type below.');return false}
+ rec=new SR();rec.continuous=true;rec.interimResults=true;rec.lang=lang;
+ rec.onresult=e=>{let it='';for(let i=e.resultIndex;i<e.results.length;i++){const r=e.results[i],s=r[0].transcript;
+   if(r.isFinal){pending+=(tx.value&&!/\s$/.test(tx.value+pending)?' ':'')+s.trim();$('#interim').textContent='';
+     if($('#spoken').value==='auto'){const d=detect(s);if(d){setBadge(d);if(d!==lang.split('-')[0]){lang=d;try{rec.stop()}catch{}}}else if(!detCode)setBadge(lang.split('-')[0])}else setBadge($('#spoken').value)}
+   else it+=s}
+  if(it)$('#interim').textContent=it};
+ rec.onend=()=>{if(listening){try{startRec()}catch{}}};
+ rec.onerror=e=>{if(e.error==='not-allowed'||e.error==='service-not-allowed'){toast('Speech recognition permission denied');setListening(false)}};
+ try{rec.start()}catch{}return true}
+function setListening(on){listening=on;$('#left').classList.toggle('listening',on);$('#mic').textContent=on?'🎙 Listening…':'🎙 Start listening';$('#mic').disabled=on;$('#stopListening').disabled=!on;if(!on&&rec){const r=rec;rec=null;r.onend=null;try{r.stop()}catch{}$('#interim').textContent=''}}
+$('#mic').onclick=()=>{if(actx&&actx.state==='suspended')actx.resume();const sel=$('#spoken').value;if(sel!=='auto')lang=sel;if(startRec())setListening(true)};
+$('#stopListening').onclick=()=>setListening(false);
+$('#spoken').onchange=()=>{const s=$('#spoken').value;if(s!=='auto'){lang=s;setBadge(s)}if(listening){const r=rec;rec=null;if(r){r.onend=null;try{r.stop()}catch{}}startRec()}};
+
+/* AI translation through a user-configured OpenAI-compatible endpoint */
+const aiSettings={endpoint:$('#aiEndpoint'),model:$('#aiModel'),key:$('#aiKey')};
+try{const saved=JSON.parse(sessionStorage.getItem('voicelens-ai-settings')||'{}');aiSettings.endpoint.value=saved.endpoint||aiSettings.endpoint.value;aiSettings.model.value=saved.model||aiSettings.model.value;aiSettings.key.value=saved.key||''}catch{}
+$('#saveAi').onclick=()=>{const settings={endpoint:aiSettings.endpoint.value.trim(),model:aiSettings.model.value.trim(),key:aiSettings.key.value.trim()};if(!settings.endpoint||!settings.model)return toast('Enter an endpoint and model');try{sessionStorage.setItem('voicelens-ai-settings',JSON.stringify(settings));toast('AI settings saved for this browser session')}catch{toast('Could not save settings in this browser')}};
+async function translate(){
+ const text=tx.value.trim();if(!target)return toast('Pick a target language first');if(!text)return toast('Nothing to translate yet, speak or type something');
+ const endpoint=aiSettings.endpoint.value.trim(),model=aiSettings.model.value.trim(),key=aiSettings.key.value.trim();
+ if(!endpoint||!model||!key)return toast('Add an AI endpoint, model and API key in AI translation settings');
+ $('#out').value='Translating to '+target.n+'…';
+ try{const response=await fetch(endpoint,{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+key},body:JSON.stringify({model,messages:[{role:'system',content:'Translate the user text into '+target.n+' ('+target.c+'). Return only the translation, without quotes or explanations.'},{role:'user',content:text}],temperature:0.2})});
+  const data=await response.json().catch(()=>({}));if(!response.ok)throw new Error(data.error?.message||'Provider returned HTTP '+response.status);
+  const result=data.choices?.[0]?.message?.content;if(typeof result!=='string'||!result.trim())throw new Error('The AI response did not contain a translation');$('#out').value=result.trim()}
+ catch(e){$('#out').value='';toast('Translation failed: '+(e.message||'check your endpoint, key and network'))}}
+$('#tr').onclick=translate;
+
+/* read aloud */
+$('#say').onclick=()=>{const b=$('#say'),t=$('#out').value.trim();if(speechSynthesis.speaking){speechSynthesis.cancel();return}
+ if(!t||!target)return toast('Translate some text first');
+ const base=target.c==='iw'?'he':target.c,u=new SpeechSynthesisUtterance(t);u.lang=base;
+ const vs=speechSynthesis.getVoices(),lo=base.toLowerCase();const v=vs.find(v=>v.lang.toLowerCase().replace('_','-').startsWith(lo))||vs.find(v=>v.lang.toLowerCase().startsWith(lo.split('-')[0]));
+ if(v)u.voice=v;else if(vs.length)toast('No '+target.n+' voice installed on this device, trying the default voice');
+ u.onstart=()=>b.classList.add('on');u.onend=u.onerror=()=>b.classList.remove('on');speechSynthesis.speak(u)};
+
+/* export */
+async function doExport(){
+ const fmt=document.querySelector('input[name=fmt]:checked').value,orig=tx.value.trim(),tr=$('#out').value.trim();
+ if(!orig&&!tr)return toast('There is no text to export yet');
+ const lines=['VoiceLens transcript','Date: '+new Date().toLocaleString(),'Detected language: '+(detCode?nameOf(detCode)+' ('+detCode+')':'unknown'),'','TRANSCRIPT',orig];
+ if(tr)lines.push('','TRANSLATION ('+(target?target.n:'')+')',tr);
+ const stamp=new Date().toISOString().slice(0,19).replace(/[:T]/g,'-');
+ try{
+  if(fmt==='txt'){const blob=new Blob([lines.join('\n')],{type:'text/plain;charset=utf-8'});const url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download='voicelens-'+stamp+'.txt';a.click();setTimeout(()=>URL.revokeObjectURL(url),1000)}
+  else{if(typeof html2pdf!=='function')throw new Error('PDF export library could not load; choose TXT or reconnect to the internet');const el=document.createElement('div');el.style.cssText='position:fixed;left:-10000px;top:0;width:700px;padding:10px;background:#fff;color:#111;font:15px/1.6 system-ui,sans-serif;white-space:pre-wrap';
+   const esc=s=>s.replace(/&/g,'&amp;').replace(/</g,'&lt;');
+   el.innerHTML='<h1 style="color:#6a2cff;margin:0 0 6px">VoiceLens transcript</h1><div style="color:#666;font-size:12px">'+esc(lines[1])+' · '+esc(lines[2])+'</div><h3 style="color:#00a9d6;margin:18px 0 4px">Transcript</h3><div>'+esc(orig)+'</div>'+(tr?'<h3 style="color:#e0149c;margin:18px 0 4px">Translation ('+esc(target?target.n:'')+')</h3><div>'+esc(tr)+'</div>':'');
+   document.body.appendChild(el);
+   const blob=await html2pdf().set({margin:12,html2canvas:{scale:2,backgroundColor:'#fff'},jsPDF:{unit:'mm',format:'a4'}}).from(el).outputPdf('blob');el.remove();
+   const url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download='voicelens-'+stamp+'.pdf';a.click();setTimeout(()=>URL.revokeObjectURL(url),1000)}
+  toast('Saved ✓')}
+ catch(e){toast(e.message||'Export failed')}}
+$('#dl').onclick=doExport;
+</script>
+</body>
+</html>

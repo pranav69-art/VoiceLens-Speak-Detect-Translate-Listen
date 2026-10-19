@@ -1,0 +1,7 @@
+Flask>=3.0,<4
+waitress>=3.0,<4
+numpy>=1.26
+scipy>=1.11
+faster-whisper>=1.1,<2
+# Faster Whisper 1.2.1 passes an av.open option removed by PyAV 19.
+av<19
